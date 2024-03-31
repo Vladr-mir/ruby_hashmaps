@@ -3,8 +3,6 @@
 require_relative 'linked_list'
 # require 'pry-byebug'
 
-# overstep_limitation = -> { raise IndexError if index.negative? || index >= @buckets.length }
-
 # Hash map implementation
 class HashMap
   INITIAL_CAPACITY = 16
@@ -38,13 +36,32 @@ class HashMap
     @length += 1
     @buckets[pos].append(key, value)
   end
-end
 
-# Binding.pry
-# my_hashmap = HashMap.new
-# my_hashmap.set('Carlos', 'Carlos')
-# my_hashmap.set('Carla', 'Carla')
-# puts my_hashmap.get('Carla')
-# puts "\n"
-# puts my_hashmap.buckets[my_hashmap.hash('Carlos')]
-# puts my_hashmap.length
+  def clear
+    @capacity = INITIAL_CAPACITY
+    @buckets = Array.new(@capacity)
+    @length = 0
+  end
+
+  # Traverses all of the nodes in the HashMap
+  def traverse(&block)
+    @buckets.each { |list| list&.traverse(&block) }
+  end
+
+  def entries
+    arr = []
+    traverse { |node| arr << [node.key, node.value] }
+    arr
+  end
+
+  # private
+
+  def double_capacity
+    @capacity *= 2
+    arr = entries
+    @buckets = Array.new(@capacity)
+
+    arr.each { |key, value| set(key, value) }
+    # traverse { |node| set(node.key, node.value) }
+  end
+end
