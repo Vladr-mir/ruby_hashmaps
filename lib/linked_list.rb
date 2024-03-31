@@ -12,24 +12,21 @@ class LinkedList
   end
 
   def append(key, value)
-    increase_size
+    increase_length
     return prepend(key, value) if @head.nil?
 
     traverse { |node| return node.next_node = Node.new(key, value, nil) if node.next_node.nil? }
   end
 
   def prepend(key, value)
-    increase_size
+    increase_length
 
     @head = Node.new(key, value, @head)
   end
 
+  # returns the last node in the list
   def tail
-    return Node.new(nil, nil) if @head.nil?
-
-    last_node = @head
-    last_node = last_node.next_node until last_node.next_node.nil?
-    last_node
+    traverse { |node| return node if node.next_node.nil? }
   end
 
   def at(index)
@@ -50,27 +47,28 @@ class LinkedList
     str << 'nil'
   end
 
-  def pop
-    decrease_size
-    at(size - 1).next_node = nil
-  end
-
-  def contains?(value)
-    !(@buckets[pos].find { |node| node.value == value }).nil?
+  def contains?(key)
+    traverse { |node| node.key == key }
+    false
   end
 
   def find
     traverse { |node| return node if yield(node) }
   end
 
+  # removes the last element in the list
+  def pop
+    decrease_length
+    at(size - 1).next_node = nil
+  end
+
+  # Removes the first element and shifts list.
   def shift
-    decrease_size
+    decrease_length
     target = @head
     @head = @head.next_node
     target
   end
-
-  private
 
   def traverse
     pos = @head
@@ -81,11 +79,13 @@ class LinkedList
     end
   end
 
-  def increase_size
+  private
+
+  def increase_length
     @length += 1
   end
 
-  def decrease_size
+  def decrease_length
     @length -= 1
   end
 end
