@@ -89,6 +89,7 @@ class LinkedList
       deleted_node = node.next_node
       if node.next_node.key == key
         node.next_node = node.next_node.next_node
+        decrease_length
         return deleted_node
       end
     end
