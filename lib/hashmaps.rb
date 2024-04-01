@@ -31,8 +31,12 @@ class HashMap
   end
 
   def set(key, value)
+    double_capacity if (@length / @capacity.to_f) >= MAX_LOAD_FACTOR
+
     pos = hash(key)
+
     @buckets[pos] = LinkedList.new if @buckets[pos].nil?
+    @buckets[pos].traverse { |node| return node.value = value if node.key == key }
     @length += 1
     @buckets[pos].append(key, value)
   end
@@ -48,15 +52,36 @@ class HashMap
     @buckets.each { |list| list&.traverse(&block) }
   end
 
+  def keys
+    arr = []
+    traverse { |node| arr << node.key }
+    arr
+  end
+
+  def values
+    arr = []
+    traverse { |node| arr << node.values }
+    arr
+  end
+
   def entries
     arr = []
     traverse { |node| arr << [node.key, node.value] }
     arr
   end
 
-  # private
+  def has?(key)
+    pos = hash(key)
+    return false if @buckets[pos].nil?
+
+    @buckets[pos].traverse { |nodes| return true if nodes.key == key }
+    false
+  end
+
+  private
 
   def double_capacity
+    @length = 0
     @capacity *= 2
     arr = entries
     @buckets = Array.new(@capacity)
