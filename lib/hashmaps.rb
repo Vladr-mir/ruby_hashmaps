@@ -41,6 +41,11 @@ class HashMap
     @buckets[pos].append(key, value)
   end
 
+  def remove(key)
+    pos = hash(key)
+    @buckets[pos].remove(key)
+  end
+
   def clear
     @capacity = INITIAL_CAPACITY
     @buckets = Array.new(@capacity)

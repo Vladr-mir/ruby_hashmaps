@@ -79,6 +79,21 @@ class LinkedList
     end
   end
 
+  # Removes the element with the key
+  def remove(key)
+    deleted_node = nil
+    traverse do |node|
+      return shift if node.key == key # Returns if the first node is the target node
+      return nil if node.next_node.nil?
+
+      deleted_node = node.next_node
+      if node.next_node.key == key
+        node.next_node = node.next_node.next_node
+        return deleted_node
+      end
+    end
+  end
+
   private
 
   def increase_length
